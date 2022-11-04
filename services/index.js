@@ -23,6 +23,7 @@ function decodeToken(token){
                 })
             }
             resolve(payload.sub)
+            console.log(payload) 
         }catch(error){
             reject({
                 status:500,
