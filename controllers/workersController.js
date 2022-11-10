@@ -1,8 +1,8 @@
-const Workers = require('../models/workers');
+const workers = require('../models/workers');
 const service = require('../services');
 
 function signUp(req, res) {
-    const user = new Workers({
+    const user = new workers({
         name_and_surname: req.body.name_and_surname,
         address: req.body.address,
         phone: req.body.phone,
@@ -29,7 +29,7 @@ function signUp(req, res) {
 }
 
 function signIn(req, res) {
-    Workers.find({ dni: req.body.dni, password: req.body.password }, (err, workers) => {
+    workers.find({ dni: req.body.dni, password: req.body.password }, (err, workers) => {
         if (err) return res.status(500).send({ message: err });
         if (!workers) return res.status(404).send({ message: 'The user does not exist' })
 
@@ -42,15 +42,40 @@ function signIn(req, res) {
 }
 
 function getWorkers(req, res) {
-    Workers.find({}, (err, workers) => {
+    workers.find({}, (err, workers) => {
         if (err) return res.status(500).send({ message: `Error making the request: ${err}` })
         if (!workers) return res.status(404).send({ message: `There are no workers` })
-        res.send(200, { workers })
+        res.status(200).send( { workers })
     });
 };
+
+function updateWorkers(req, res) {
+    let workersId = req.params.workerId
+    let update = req.body
+
+    workers.findByIdAndUpdate(workersId, update, (err, workersUpdated) => {
+        if (err) res.status(500).send({ message: `Error updating the employee data: ${err}` })
+        res.status(200).send({ workers: workersUpdated })
+    })
+}
+
+function deleteWorkers(req, res) {
+    let workerId = req.params.workerId
+
+    workers.findById(workerId, (err, worker) => {
+        if (!worker) return res.send({ message: 'The worker does not exist' });
+        worker.remove(err => {
+            if (err) res.status(500).send({ message: `Failed to delete worker: ${err}` });
+            res.status(200).send({ message: 'The worker has been removed' });
+        });
+    });
+}
+
 
 module.exports = {
     signUp,
     signIn,
-    getWorkers
+    getWorkers,
+    deleteWorkers,
+    updateWorkers,
 }

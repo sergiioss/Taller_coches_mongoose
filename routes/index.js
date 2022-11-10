@@ -10,6 +10,8 @@ api.get('/', (req, res) =>{
 api.post('/signup', workCtrl.signUp);
 api.post('/signin', workCtrl.signIn);
 api.get('/workers', workCtrl.getWorkers);
+api.delete('/deleteworker/:workerId', workCtrl.deleteWorkers);
+api.put('/updateworker/:workerId', workCtrl.updateWorkers);
 
 
 
