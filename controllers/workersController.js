@@ -38,46 +38,60 @@ function signUp(req, res) {
 }
 
 function signIn(req, res) {
-    workers.find({ dni: req.body.dni, password: req.body.password }, (err, workers) => {
-        if (err) return res.status(500).send({ message: err });
-        if (!workers) return res.status(404).send({ message: 'The user does not exist' })
 
-        req.workers = workers;
-        res.status(200).send({
-            message: 'You have successfully logged in',
-            token: service.createToken(workers)
+    try {
+        workers.find({ dni: req.body.dni, password: req.body.password }, (err, workers) => {
+            if (err) return res.status(500).send({ message: err });
+            if (!workers) return res.status(404).send({ message: 'The user does not exist' })
+            req.workers = workers;
+            res.status(200).send({
+                message: 'You have successfully logged in',
+                token: service.createToken(workers)
+            })
         })
-    })
+    } catch (error) {
+        res.status(500).send({ message: `Error ${err}` })
+    }
 }
 
 function getWorkers(req, res) {
-    workers.find({}, (err, workers) => {
-        if (err) return res.status(500).send({ message: `Error making the request: ${err}` })
-        if (!workers) return res.status(404).send({ message: `There are no workers` })
-        res.status(200).send({ workers })
-    });
+    try {
+        workers.find({}, (err, workers) => {
+            if (!workers) return res.status(404).send({ message: `There are no workers` })
+            res.status(200).send({ workers })
+        });
+    } catch (error) {
+        res.status(500).send({ message: `Error making the request: ${err}` })
+    }
 };
 
 function updateWorkers(req, res) {
     let workersId = req.params.workerId
     let update = req.body
-
-    workers.findByIdAndUpdate(workersId, update, (err, workersUpdated) => {
-        if (err) res.status(500).send({ message: `Error updating the employee data: ${err}` })
-        res.status(200).send({ workers: workersUpdated })
-    })
+    
+    try {
+        workers.findByIdAndUpdate(workersId, update, (err, workersUpdated) => {
+            res.status(200).send({ workers: workersUpdated })
+        })
+    } catch (error) {
+        res.status(500).send({ message: `Error updating the employee data: ${err}` })
+    }
 }
 
 function deleteWorkers(req, res) {
     let workerId = req.params.workerId
 
-    workers.findById(workerId, (err, worker) => {
-        if (!worker) return res.send({ message: 'The worker does not exist' });
-        worker.remove(err => {
-            if (err) res.status(500).send({ message: `Failed to delete worker: ${err}` });
-            res.status(200).send({ message: 'The worker has been removed' });
+    try {
+        workers.findById(workerId, (err, worker) => {
+            if (!worker) return res.send({ message: 'The worker does not exist' });
+            worker.remove(err => {
+                if (err) res.status(500).send({ message: `Failed to delete worker: ${err}` });
+                res.status(200).send({ message: 'The worker has been removed' });
+            });
         });
-    });
+    } catch (err) {
+        res.status(500).send({ message: `Failed to delete worker: ${err}` })
+    }
 }
 
 

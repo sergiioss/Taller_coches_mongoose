@@ -23,7 +23,7 @@ function createRepair(req, res) {
             if (err) {
                 res.status(500).send({ message: `Error creating repair:${err}` });
             } else {
-                res.status(200).send({message: 'The repair has been created'})
+                res.status(200).send({ message: 'The repair has been created' })
             }
         })
     } catch (error) {
@@ -65,11 +65,15 @@ function deleteRepairs(req, res) {
 function updateRepair(req, res) {
     let repairsId = req.params.repairsId
     let update = req.body
-
-    repairs.findByIdAndUpdate(repairsId, update, (err, repairsUpdate) => {
-        if (err) res.status(500).send({ message: `Error updating the employee data: ${err}` })
-        res.status(200).send({ repairs: repairsUpdate })
-    })
+    
+    try {
+        repairs.findByIdAndUpdate(repairsId, update, (err, repairsUpdate) => {
+            if (err) res.status(500).send({ message: `Error updating the employee data: ${err}` })
+            res.status(200).send({ repairs: repairsUpdate })
+        })
+    } catch (error) {
+        res.status(500).send({ message: `Error updating the employee data: ${err}` })
+    }
 }
 
 module.exports = {
