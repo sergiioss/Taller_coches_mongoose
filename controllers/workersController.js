@@ -21,11 +21,20 @@ function signUp(req, res) {
         future_use: req.body.future_use
     })
 
-    user.save((err) => {
-        if (err) res.status(500).send({ message: `Error creating user:${err}` });
-
-        return res.status(200).send({ token: service.createToken(user) })
-    });
+    try {
+        user.save((err) => {
+            if (err) {
+                res.status(500).send({ message: `Error creating user` })
+            } else {
+                res.status(200).send({
+                    message: `The Worker has been created`,
+                    token: service.createToken(user)
+                })
+            }
+        })
+    } catch (err) {
+        res.status(500).send({ message: `There has been an error creating the new worker` })
+    }
 }
 
 function signIn(req, res) {
@@ -45,7 +54,7 @@ function getWorkers(req, res) {
     workers.find({}, (err, workers) => {
         if (err) return res.status(500).send({ message: `Error making the request: ${err}` })
         if (!workers) return res.status(404).send({ message: `There are no workers` })
-        res.status(200).send( { workers })
+        res.status(200).send({ workers })
     });
 };
 

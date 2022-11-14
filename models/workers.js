@@ -7,7 +7,7 @@ const WorkersSchema = new Schema({
     name_and_surname: String,
     address: String,
     phone: String,
-    dni: {type: String, unique: true, lowercase: false},
+    dni: { type: String, lowercase: false },
     email: { type: String, lowercase: true },
     age: Number,
     gender: { type: String, enum: ['male', 'female'] },
@@ -19,7 +19,7 @@ const WorkersSchema = new Schema({
     contract: String,
     job: String,
     current_account: String,
-    future_use:String
+    future_use: String
 })
 
 WorkersSchema.pre('save', (next) => {
