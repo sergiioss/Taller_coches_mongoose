@@ -12,6 +12,7 @@ api.get('/', (req, res) =>{
 api.post('/signup', workCtrl.signUp);
 api.post('/signin', workCtrl.signIn);
 api.get('/workers', workCtrl.getWorkers);
+api.get('/workers/age', workCtrl.getWorkersAge);
 api.delete('/deleteworker/:workerId', workCtrl.deleteWorkers);
 api.put('/updateworker/:workerId', workCtrl.updateWorkers);
 
@@ -20,6 +21,7 @@ api.get('/repairs', repairCtrl.getRepairs);
 api.post('/create/repairs', repairCtrl.createRepair);
 api.delete('/delete/repairs/:repairsId', repairCtrl.deleteRepairs);
 api.put('/update/repair/:repairsId', repairCtrl.updateRepair);
+api.get('/repairs/exist', repairCtrl.getRepairsExists);
 
 
 

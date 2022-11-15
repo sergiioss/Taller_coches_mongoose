@@ -46,6 +46,17 @@ function getRepairs(req, res) {
     }
 };
 
+function getRepairsExists(req, res) {
+    try {
+        repairs.find({ departure_date : {$ne:null}}, (err, repairs) => {
+            if (!repairs) return res.status(404).send({ message: `There are no workers` })
+            res.status(200).send({ repairs })
+        });
+    } catch (error) {
+        res.status(500).send({ message: `Error making the request: ${err}` })
+    }
+};
+
 function deleteRepairs(req, res) {
     let repairsId = req.params.repairsId
 
@@ -80,5 +91,6 @@ module.exports = {
     getRepairs,
     createRepair,
     deleteRepairs,
-    updateRepair
+    updateRepair,
+    getRepairsExists
 }

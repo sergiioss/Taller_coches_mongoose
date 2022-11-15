@@ -40,14 +40,15 @@ function signUp(req, res) {
 function signIn(req, res) {
 
     try {
-        workers.find({ dni: req.body.dni, password: req.body.password }, (err, workers) => {
-            if (err) return res.status(500).send({ message: err });
-            if (!workers) return res.status(404).send({ message: 'The user does not exist' })
-            req.workers = workers;
-            res.status(200).send({
-                message: 'You have successfully logged in',
-                token: service.createToken(workers)
-            })
+        workers.findOne({ dni: req.body.dni, password: req.body.password }, (err, work) => {
+            if (work) {
+                res.status(200).send({
+                    message: 'You have successfully logged in',
+                    token: service.createToken(work)
+                })
+            } else {
+                res.status(500).send({ message: 'Error username or password'})
+            }
         })
     } catch (error) {
         res.status(500).send({ message: `Error ${err}` })
@@ -65,10 +66,21 @@ function getWorkers(req, res) {
     }
 };
 
+function getWorkersAge(req, res) {
+    try {
+        workers.find({ age: { $gte: 30 } }, (err, workers) => {
+            if (!workers) return res.status(404).send({ message: `There are no workers` })
+            res.status(200).send({ workers })
+        });
+    } catch (error) {
+        res.status(500).send({ message: `Error making the request: ${err}` })
+    }
+};
+
 function updateWorkers(req, res) {
     let workersId = req.params.workerId
     let update = req.body
-    
+
     try {
         workers.findByIdAndUpdate(workersId, update, (err, workersUpdated) => {
             res.status(200).send({ workers: workersUpdated })
@@ -101,4 +113,5 @@ module.exports = {
     getWorkers,
     deleteWorkers,
     updateWorkers,
+    getWorkersAge
 }

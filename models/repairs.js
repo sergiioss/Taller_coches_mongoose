@@ -8,14 +8,14 @@ const RepairsSchema = new Schema({
     clientDni: { type: String, lowercase: false },
     clientEmail: { type: String, lowercase: true },
     entry_date: { type: Date, default: Date.now() },
-    departure_date: Date,
+    departure_date: {type: Date},
     fault_description: String,
     repair_number: String,
     price: Number,
     brand: String,
     model: String,
     registration_year: Number,
-    image: String,
+    image: Buffer,
     insurance_company: String,
     future_use: String
 });
