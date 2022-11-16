@@ -10,7 +10,7 @@ const RepairsSchema = new Schema({
     entry_date: { type: Date, default: Date.now() },
     departure_date: {type: Date},
     fault_description: String,
-    repair_number: String,
+    repair_number: {type:Number},
     price: Number,
     brand: String,
     model: String,

@@ -1,34 +1,63 @@
 const repairs = require('../models/repairs');
+const counter = require('../models/counter')
 
 function createRepair(req, res) {
-    const repair = new repairs({
-        name_and_surname: req.body.name_and_surname,
-        phone: req.body.phone,
-        address: req.body.address,
-        clientDni: req.body.clientDni,
-        clientEmail: req.body.clientEmail,
-        price: req.body.price,
-        brand: req.body.brand,
-        model: req.body.model,
-        registration_year: req.body.registration_year,
-        image: req.body.image,
-        repair_number: req.body.repair_numer,
-        fault_description: req.body.fault_description,
-        insurance_company: req.body.insurance_company,
-        future_use: req.body.future_use
-    })
-
     try {
-        repair.save((err) => {
-            if (err) {
-                res.status(500).send({ message: `Error creating repair:${err}` });
+        repairs.findOne({}).sort({ "repair_number": -1 }).exec(function (err, seq) {
+            if (seq == null) {
+                const repair = new repairs({
+                    name_and_surname: req.body.name_and_surname,
+                    phone: req.body.phone,
+                    address: req.body.address,
+                    clientDni: req.body.clientDni,
+                    clientEmail: req.body.clientEmail,
+                    price: req.body.price,
+                    brand: req.body.brand,
+                    model: req.body.model,
+                    registration_year: req.body.registration_year,
+                    image: req.body.image,
+                    repair_number: 1,
+                    fault_description: req.body.fault_description,
+                    insurance_company: req.body.insurance_company,
+                    future_use: req.body.future_use
+                })
+                repair.save((err) => {
+                    if (err) {
+                        res.status(500).send({ message: `Error creating repair:${err}` });
+                    } else {
+                        res.status(200).send({ message: 'The repair has been created' })
+                    }
+                })
             } else {
-                res.status(200).send({ message: 'The repair has been created' })
+                seq.updateOne(seq.repair_number += 1)
+                const repair = new repairs({
+                    name_and_surname: req.body.name_and_surname,
+                    phone: req.body.phone,
+                    address: req.body.address,
+                    clientDni: req.body.clientDni,
+                    clientEmail: req.body.clientEmail,
+                    price: req.body.price,
+                    brand: req.body.brand,
+                    model: req.body.model,
+                    registration_year: req.body.registration_year,
+                    image: req.body.image,
+                    repair_number: seq.repair_number,
+                    fault_description: req.body.fault_description,
+                    insurance_company: req.body.insurance_company,
+                    future_use: req.body.future_use
+                })
+                repair.save((err) => {
+                    if (err) {
+                        res.status(500).send({ message: `Error creating repair:${err}` });
+                    } else {
+                        res.status(200).send({ message: 'The repair has been created' })
+                    }
+                })
             }
         })
     } catch (error) {
-        res.status(500).send({ message: `Error creating repair:${error}` });
-    }
+    res.status(500).send({ message: `Error creating repair:${error}` });
+}
 }
 
 function getRepairs(req, res) {
@@ -48,7 +77,7 @@ function getRepairs(req, res) {
 
 function getRepairsExists(req, res) {
     try {
-        repairs.find({ departure_date : {$ne:null}}, (err, repairs) => {
+        repairs.find({ departure_date: { $ne: null } }, (err, repairs) => {
             if (!repairs) return res.status(404).send({ message: `There are no workers` })
             res.status(200).send({ repairs })
         });
@@ -76,7 +105,7 @@ function deleteRepairs(req, res) {
 function updateRepair(req, res) {
     let repairsId = req.params.repairsId
     let update = req.body
-    
+
     try {
         repairs.findByIdAndUpdate(repairsId, update, (err, repairsUpdate) => {
             if (err) res.status(500).send({ message: `Error updating the employee data: ${err}` })
