@@ -1,5 +1,4 @@
 const repairs = require('../models/repairs');
-const counter = require('../models/counter')
 
 function createRepair(req, res) {
     try {
@@ -86,6 +85,18 @@ function getRepairsExists(req, res) {
     }
 };
 
+function listRepairs(req, res) {
+    try {
+        repairs.find({}).sort({entry_date: -1}).exec(function(err, repairs){
+            if (err) return res.status(500).send({ message: `Error repairs` })
+            if (!repairs) return res.status(404).send({ message: `There are no repairs` })
+            res.status(200).send({ repairs })
+        });
+    } catch (error) {
+        res.status(500).send({ message: `Error making the request: ${err}` })
+    }
+};
+
 function deleteRepairs(req, res) {
     let repairsId = req.params.repairsId
 
@@ -121,5 +132,6 @@ module.exports = {
     createRepair,
     deleteRepairs,
     updateRepair,
-    getRepairsExists
+    getRepairsExists,
+    listRepairs
 }

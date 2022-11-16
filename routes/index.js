@@ -22,7 +22,6 @@ api.post('/create/repairs', repairCtrl.createRepair);
 api.delete('/delete/repairs/:repairsId', repairCtrl.deleteRepairs);
 api.put('/update/repair/:repairsId', repairCtrl.updateRepair);
 api.get('/repairs/exist', repairCtrl.getRepairsExists);
-
-
+api.get('/repairs/list', repairCtrl.listRepairs);
 
 module.exports = api;
