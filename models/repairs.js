@@ -18,6 +18,7 @@ const RepairsSchema = new Schema({
     image: Buffer,
     insurance_company: String,
     future_use: String
+
 });
 
 module.exports = mongoose.model('Repairs', RepairsSchema);

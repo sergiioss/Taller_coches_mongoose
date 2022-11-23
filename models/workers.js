@@ -19,7 +19,11 @@ const WorkersSchema = new Schema({
     contract: String,
     job: String,
     current_account: String,
-    future_use: String
+    future_use: String,
+    reparations:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Repairs'
+    }]
 })
 
 WorkersSchema.pre('save', (next) => {

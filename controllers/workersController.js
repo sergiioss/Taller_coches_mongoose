@@ -18,7 +18,8 @@ function signUp(req, res) {
         contract: req.body.contract,
         job: req.body.job,
         current_account: req.body.current_account,
-        future_use: req.body.future_use
+        future_use: req.body.future_use,
+        reparations: req.body.reparations
     })
 
     try {
@@ -60,7 +61,9 @@ function getWorkers(req, res) {
         workers.find({}, (err, workers) => {
             if (!workers) return res.status(404).send({ message: `There are no workers` })
             res.status(200).send({ workers })
-        });
+        }).populate(
+            {path:'reparations', model: 'Repairs'}
+        );
     } catch (error) {
         res.status(500).send({ message: `Error making the request: ${err}` })
     }
