@@ -62,10 +62,14 @@ function getWorkers(req, res) {
             if (!workers) return res.status(404).send({ message: `There are no workers` })
             res.status(200).send({ workers })
         }).populate(
-            {path:'reparations', model: 'Repairs'}
-        );
+            {
+                path:'reparations', 
+                model: 'Repairs',
+                select: '-_id name_and_surname clientDni clientEmail repair_number brand model'
+            }
+        )
     } catch (error) {
-        res.status(500).send({ message: `Error making the request: ${err}` })
+        res.status(500).send({ message: `Error making the request: ${error}` })
     }
 };
 

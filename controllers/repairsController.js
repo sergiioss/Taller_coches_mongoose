@@ -1,4 +1,5 @@
 const repairs = require('../models/repairs');
+const workers = require('../models/workers');
 
 function createRepair(req, res) {
     try {
@@ -18,13 +19,26 @@ function createRepair(req, res) {
                     repair_number: 1,
                     fault_description: req.body.fault_description,
                     insurance_company: req.body.insurance_company,
-                    future_use: req.body.future_use
+                    future_use: req.body.future_use,
+                    workerId: req.body.workerId
                 })
                 repair.save((err) => {
                     if (err) {
                         res.status(500).send({ message: `Error creating repair:${err}` });
                     } else {
-                        res.status(200).send({ message: 'The repair has been created' })
+
+                        let workersId = repair.workerId
+                        let update = { reparations: [repair._id] }
+
+                        workers.findByIdAndUpdate(workersId, update, (err, workerUpdated) => {
+
+                            if (err) return res.status(500).send({ message: `Error updating the reparation: ${err}` })
+
+                            return res.status(200).send({
+                                workersUp: workerUpdated,
+                                message: 'The repair has been created'
+                            })
+                        })
                     }
                 })
             } else {
@@ -43,20 +57,32 @@ function createRepair(req, res) {
                     repair_number: seq.repair_number,
                     fault_description: req.body.fault_description,
                     insurance_company: req.body.insurance_company,
-                    future_use: req.body.future_use
+                    future_use: req.body.future_use,
+                    workerId: req.body.workerId
                 })
                 repair.save((err) => {
                     if (err) {
                         res.status(500).send({ message: `Error creating repair:${err}` });
                     } else {
-                        res.status(200).send({ message: 'The repair has been created' })
+                        let workersId = repair.workerId
+                        let update = { reparations: [repair._id] }
+
+                        workers.findByIdAndUpdate(workersId, update, (err, workerUpdated) => {
+
+                            if (err) return res.status(500).send({ message: `Error updating the reparation: ${err}` })
+
+                            return res.status(200).send({
+                                workersUp: workerUpdated,
+                                message: 'The repair has been created'
+                            })
+                        })
                     }
                 })
             }
         })
     } catch (error) {
-    res.status(500).send({ message: `Error creating repair:${error}` });
-}
+        res.status(500).send({ message: `Error creating repair:${error}` });
+    }
 }
 
 function getRepairs(req, res) {
@@ -68,7 +94,7 @@ function getRepairs(req, res) {
             } else {
                 res.status(200).send({ repairs })
             }
-        });
+        })
     } catch (error) {
         res.send({ message: `Error getting repairs` })
     }
@@ -87,7 +113,7 @@ function getRepairsExists(req, res) {
 
 function listRepairs(req, res) {
     try {
-        repairs.find({}).sort({entry_date: -1}).exec(function(err, repairs){
+        repairs.find({}).sort({ entry_date: -1 }).exec(function (err, repairs) {
             if (err) return res.status(500).send({ message: `Error repairs` })
             if (!repairs) return res.status(404).send({ message: `There are no repairs` })
             res.status(200).send({ repairs })

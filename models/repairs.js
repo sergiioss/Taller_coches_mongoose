@@ -17,7 +17,12 @@ const RepairsSchema = new Schema({
     registration_year: Number,
     image: Buffer,
     insurance_company: String,
-    future_use: String
+    future_use: String,
+    workerId:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Workers'
+    }
 
 });
 
